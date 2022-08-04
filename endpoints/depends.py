@@ -2,7 +2,12 @@ from fastapi import Depends, HTTPException, status
 from db.base import database
 from models.user import User
 from repositories.users import UserRepository
+from repositories.recipes import RecipeRepository
 from core.security import JWTBearer, decode_access_token
+
+
+def get_recipe_repository() -> RecipeRepository:
+    return RecipeRepository(database)
 
 
 def get_user_repository() -> UserRepository:

@@ -1,11 +1,12 @@
 import uvicorn
 from fastapi import FastAPI
 from db.base import database
-from endpoints import users, auth
+from endpoints import users, auth, recipes
 
 app = FastAPI(title="Recipe service")
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(recipes.router, prefix="/recipes", tags=["recipes"])
 
 
 @app.on_event("startup")
