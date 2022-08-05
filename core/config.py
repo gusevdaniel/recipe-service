@@ -18,3 +18,4 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 ALGORITHM = "HS256"
 
 SECRET_KEY = config("SECRET_KEY", cast=str, default="")
+ADMIN_KEY = config("ADMIN_KEY", cast=str, default="")
