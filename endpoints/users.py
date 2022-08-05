@@ -12,7 +12,7 @@ async def create_user(
     user: UserIn,
     users: UserRepository = Depends(get_user_repository)
 ):
-    check_user = users.get_by_username(username=user.username)
+    check_user = await users.get_by_username(username=user.username)
     if check_user is not None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This username already exists")
     return await users.create(u=user)
