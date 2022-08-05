@@ -17,11 +17,23 @@ async def create_recipe(
     return await recipes.create(user_id=current_user.id, r=r)
 
 
+@router.get("/{id}", response_model=Recipe)
+async def read_recipe(
+    id: int,
+    recipes: RecipeRepository = Depends(get_recipe_repository)
+):
+    recipe = await recipes.get_by_id(id=id)
+    if recipe is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recipe not found")
+    return recipe
+
+
 @router.get("/", response_model=List[Recipe])
 async def read_recipes(
     limit: int = 100,
     skip: int = 0,
-    recipes: RecipeRepository = Depends(get_recipe_repository)):
+    recipes: RecipeRepository = Depends(get_recipe_repository)
+):
     return await recipes.get_all(limit=limit, skip=skip)
 
 
