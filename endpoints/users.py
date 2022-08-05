@@ -43,10 +43,16 @@ async def read_user(
     return user_profile
 
 
-@router.get("/", response_model=List[User])
+@router.get("/", response_model=List[UserProfile])
 async def read_users(
     users: UserRepository = Depends(get_user_repository),
-    limit: int = 100,
-    skip: int = 0
+    limit: int = 10
 ):
-    return await users.get_all(limit=limit, skip=skip)
+    active_users_objects = await users.get_active(limit=limit)
+    active_users = []
+    for obj in active_users_objects:
+        user_profile = await users.get_profile(obj)
+        user_profile = {**user_profile.dict()}
+        active_users.append(user_profile)
+    active_users = sorted(active_users, key=lambda x: x['recipes_count'], reverse=True)
+    return active_users

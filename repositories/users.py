@@ -49,6 +49,10 @@ class UserRepository(BaseRepository):
         query = users.select().limit(limit).offset(skip)
         return await self.database.fetch_all(query=query)
 
+    async def get_active(self, limit: int = 100) -> List[User]:
+        query = users.select().where(users.c.is_active == True).limit(limit)
+        return await self.database.fetch_all(query=query)
+
     async def get_by_id(self, id: int) -> Optional[User]:
         query = users.select().where(users.c.id == id)
         user = await self.database.fetch_one(query)
