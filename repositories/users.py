@@ -38,6 +38,9 @@ class UserRepository(BaseRepository):
         values.pop("id", None)
         query = users.update().where(users.c.id == id).values(**values)
         await self.database.execute(query)
+        query = users.select().where(users.c.id == id)
+        old_user = await self.database.fetch_one(query)
+        user.created_at = old_user.created_at
         return user
 
     async def get_all(self, limit: int = 100, skip: int = 0) -> List[User]:

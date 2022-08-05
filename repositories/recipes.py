@@ -45,6 +45,9 @@ class RecipeRepository(BaseRepository):
         values.pop("created_at", None)
         query = recipes.update().where(recipes.c.id == id).values(**values)
         await self.database.execute(query=query)
+        query = recipes.select().where(recipes.c.id == id)
+        old_recipe = await self.database.fetch_one(query)
+        recipe.created_at = old_recipe.created_at
         return recipe
 
     async def get_all(self, limit: int = 100, skip: int = 0) -> List[Recipe]:
