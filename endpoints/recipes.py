@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from models.recipe import Recipe, RecipeIn
 from models.user import User
 from repositories.recipes import RecipeRepository
@@ -30,11 +30,20 @@ async def read_recipe(
 
 @router.get("/", response_model=List[Recipe])
 async def read_recipes(
+    filter: Optional[str] = None,
     limit: int = 100,
     skip: int = 0,
     recipes: RecipeRepository = Depends(get_recipe_repository)
 ):
-    return await recipes.get_all(limit=limit, skip=skip)
+    active_recipes_objects = await recipes.get_active(filter, limit=limit, skip=skip)
+    active_recipes = []
+    for obj in active_recipes_objects:
+        recipe = Recipe.parse_obj(obj)
+        recipe = {**recipe.dict()}
+        recipe.pop("cooking_steps", None)
+        active_recipes.append(obj)
+    active_recipes = sorted(active_recipes, key=lambda x: x['created_at'], reverse=True)
+    return active_recipes
 
 
 @router.put("/", response_model=Recipe)

@@ -1,5 +1,6 @@
-from typing import List, Optional
 import datetime
+from typing import List, Optional
+from sqlalchemy import or_
 from models.recipe import Recipe, RecipeIn
 from db.recipes import recipes
 from .base import BaseRepository
@@ -52,6 +53,20 @@ class RecipeRepository(BaseRepository):
 
     async def get_all(self, limit: int = 100, skip: int = 0) -> List[Recipe]:
         query = recipes.select().limit(limit).offset(skip)
+        return await self.database.fetch_all(query=query)
+
+    async def get_active(self, filter: Optional[str] = None, limit: int = 100, skip: int = 0) -> List[Recipe]:
+        if filter is None:
+            query = recipes.select().where(recipes.c.is_active == True).limit(limit).offset(skip)
+        else:
+            query = recipes.select().where(
+                recipes.c.is_active == True
+            ).filter(
+                or_(recipes.c.name.contains(filter),
+                    recipes.c.name.contains(filter.lower()),
+                    recipes.c.name.contains(filter.capitalize())
+                    )
+            ).limit(limit).offset(skip)
         return await self.database.fetch_all(query=query)
 
     async def delete(self, id: int):
