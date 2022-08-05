@@ -1,8 +1,10 @@
 import datetime
 from typing import List, Optional
+from sqlalchemy import select, func
 from .base import BaseRepository
 from db.users import users
-from models.user import User, UserIn
+from db.recipes import recipes
+from models.user import User, UserIn, UserProfile
 from core.security import hash_password
 
 
@@ -60,3 +62,14 @@ class UserRepository(BaseRepository):
         if user is None:
             return None
         return User.parse_obj(user)
+
+    async def get_profile(self, u: User) -> UserProfile:
+        query = select([func.count()]).select_from(recipes).where(recipes.c.user_id == int(u.id))
+        recipes_count = await self.database.execute(query)
+        user_profile = UserProfile(
+            id=u.id,
+            username=u.username,
+            is_active=u.is_active,
+            recipes_count=recipes_count
+        )
+        return user_profile

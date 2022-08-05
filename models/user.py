@@ -28,3 +28,10 @@ class UserIn(BaseModel):
         if 'password' in values and v != values["password"]:
             raise ValueError("passwords don't match")
         return v
+
+
+class UserProfile(BaseModel):
+    id: str
+    username: str
+    is_active: bool
+    recipes_count: int
