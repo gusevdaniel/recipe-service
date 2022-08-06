@@ -8,7 +8,7 @@ from .depends import get_recipe_repository, get_current_user
 router = APIRouter()
 
 
-@router.post("/", response_model=Recipe)
+@router.post("/create", response_model=Recipe)
 async def create_recipe(
     r: RecipeIn,
     recipes: RecipeRepository = Depends(get_recipe_repository),
@@ -46,7 +46,7 @@ async def read_recipes(
     return active_recipes
 
 
-@router.put("/", response_model=Recipe)
+@router.put("/{id}/update", response_model=Recipe)
 async def update_recipe(
     id: int,
     r: RecipeIn,
@@ -59,7 +59,7 @@ async def update_recipe(
     return await recipes.update(id=id, user_id=current_user.id, r=r)
 
 
-@router.delete("/")
+@router.delete("/{id}/delete")
 async def delete_recipe(
     id: int,
     recipes: RecipeRepository = Depends(get_recipe_repository),
