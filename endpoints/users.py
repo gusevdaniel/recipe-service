@@ -7,7 +7,7 @@ from .depends import get_user_repository, get_current_user
 router = APIRouter()
 
 
-@router.post("/", response_model=User)
+@router.post("/create", response_model=User)
 async def create_user(
     user: UserIn,
     users: UserRepository = Depends(get_user_repository)
@@ -18,7 +18,7 @@ async def create_user(
     return await users.create(u=user)
 
 
-@router.put("/", response_model=User)
+@router.put("/{id}/update", response_model=User)
 async def update_user(
     id: int,
     user: UserIn,
@@ -31,12 +31,12 @@ async def update_user(
     return await users.update(id=id, u=user)
 
 
-@router.get("/{username}", response_model=UserProfile)
+@router.get("/{id}", response_model=UserProfile)
 async def read_user(
-    username: str,
+    id: int,
     users: UserRepository = Depends(get_user_repository),
 ):
-    user = await users.get_by_username(username=username)
+    user = await users.get_by_id(id=id)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found user")
     user_profile = await users.get_profile(user)

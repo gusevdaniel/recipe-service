@@ -11,7 +11,7 @@ from core.config import ADMIN_KEY
 router = APIRouter()
 
 
-@router.put("/users", response_model=User)
+@router.put("/users/{id}/update", response_model=User)
 async def update_user(
     id: int,
     admin: Admin,
@@ -26,7 +26,7 @@ async def update_user(
     return await admins.update_user(id=id, a=admin)
 
 
-@router.put("/recipes", response_model=Recipe)
+@router.put("/recipes/{id}/update", response_model=Recipe)
 async def update_recipe(
     id: int,
     admin: Admin,
